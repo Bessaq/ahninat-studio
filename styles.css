@@ -1,12 +1,14 @@
 /* Ahninat Studio: estilos.
    Tokens de marca/tokens.json e do Manual de Marca v1.0: paleta, Inter, grid de 8 px,
-   cantos 8/12, transições de 180 a 280 ms, coral só como acento. */
+   cantos 8/12, transições de 180 a 280 ms, coral só como acento. Sistema gráfico: campos
+   que se encontram (cantos amplos, marcas d'água do símbolo) e a conexão como acento
+   (linha fina + nó coral). */
 
 :root {
   --petroleo: #174B52;
   --petroleo-escuro: #103A40;
-  --petroleo-fundo: #123C42;
   --grafite: #20252B;
+  --grafite-escuro: #171b20;
   --marfim: #F4F0E8;
   --marfim-escuro: #EAE4D8;
   --coral: #D9675A;
@@ -21,6 +23,7 @@
 
   --r-controle: 8px;
   --r-card: 12px;
+  --r-campo: clamp(56px, 9vw, 128px);
 
   --t-rapida: 180ms;
   --t-padrao: 240ms;
@@ -47,11 +50,23 @@ body {
   font-feature-settings: "cv11", "ss01";
   -webkit-font-smoothing: antialiased;
 }
+/* Grão de papel sem brilho (manual: textura tátil discreta), por cima de tudo e sem capturar toques */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  background: url("assets/grao.png") repeat;
+  opacity: 0.45;
+  mix-blend-mode: multiply;
+}
 
 img, svg { display: block; max-width: 100%; }
 a { color: inherit; text-decoration: none; }
 p { margin: 0; }
 ul, ol { margin: 0; padding: 0; list-style: none; }
+dl, dd { margin: 0; }
 
 :focus-visible {
   outline: 2px solid var(--coral-acao);
@@ -69,33 +84,42 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 /* ---------- Tipografia ---------- */
 
 .eyebrow {
+  display: flex;
+  align-items: center;
   font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--petroleo);
-  margin: 0 0 16px;
+  margin: 0 0 20px;
 }
-.eyebrow--claro { color: rgba(244, 240, 232, 0.72); }
+.eyebrow--claro { color: rgba(244, 240, 232, 0.78); }
 .eyebrow--coral { color: var(--coral); }
+.eyebrow--centro { justify-content: center; }
+/* a conexão como acento: linha fina e nó coral antes do rótulo */
+.no { display: inline-flex; align-items: center; margin-right: 14px; }
+.no::before { content: ""; width: 28px; height: 2px; background: currentColor; opacity: 0.55; }
+.no::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--coral); margin-left: 6px; }
 
 .display {
-  font-size: clamp(2.5rem, 5.6vw, 4.25rem);
-  line-height: 1.05;
+  font-size: clamp(2.75rem, 6.2vw, 4.75rem);
+  line-height: 1.02;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   margin: 0;
   text-wrap: balance;
 }
+.display em { font-style: normal; color: var(--petroleo); }
 .titulo-secao {
-  font-size: clamp(1.75rem, 3.4vw, 2.5rem);
-  line-height: 1.15;
+  font-size: clamp(1.875rem, 3.6vw, 2.75rem);
+  line-height: 1.12;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
   margin: 0;
   text-wrap: balance;
 }
 .titulo-secao em { font-style: normal; color: var(--petroleo); }
+.secao--petroleo .titulo-secao em { color: var(--coral); }
 .titulo-card {
   font-size: 1.25rem;
   line-height: 1.3;
@@ -116,11 +140,15 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .container {
   width: min(100% - 2 * var(--gutter), var(--largura));
   margin-inline: auto;
+  position: relative;
 }
 
-.secao { padding-block: clamp(64px, 10vw, 128px); }
-.secao--petroleo { background: var(--petroleo); color: var(--marfim); }
+.secao { position: relative; padding-block: clamp(72px, 10vw, 136px); }
+.secao--petroleo { background: var(--petroleo); color: var(--marfim); overflow: hidden; }
 .secao--branco { background: var(--branco); }
+/* cantos amplos: os campos do sistema gráfico, um por seção */
+.secao--canto-esquerdo { border-top-left-radius: var(--r-campo); margin-top: -1px; }
+.secao--canto-direito { border-top-right-radius: var(--r-campo); }
 
 .cabecalho-secao {
   display: grid;
@@ -131,10 +159,29 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .cabecalho-secao .lead { margin-top: 0; }
 .secao--petroleo .lead { color: rgba(244, 240, 232, 0.78); }
 
+/* Marca d'água: as três partes do símbolo, grandes e quase invisíveis */
+.marca-dagua {
+  position: absolute;
+  width: clamp(360px, 44vw, 640px);
+  height: auto;
+  aspect-ratio: 208 / 190;
+  color: var(--marfim);
+  opacity: 0.06;
+  pointer-events: none;
+}
+.marca-dagua--direita { right: -6%; top: -8%; }
+.marca-dagua--esquerda { left: -10%; bottom: -14%; }
+.marca-dagua--rodape { right: -4%; top: -30%; width: clamp(280px, 30vw, 440px); opacity: 0.05; }
+
 /* Entrada suave ao rolar (o JS acrescenta .revelado; sem JS, tudo aparece) */
 @media (prefers-reduced-motion: no-preference) {
-  .js [data-revelar] { opacity: 0; transform: translateY(16px); transition: opacity var(--t-lenta) var(--ease), transform var(--t-lenta) var(--ease); }
+  .js [data-revelar] { opacity: 0; transform: translateY(18px); transition: opacity 420ms var(--ease), transform 420ms var(--ease); }
   .js [data-revelar].revelado { opacity: 1; transform: none; }
+  .js .processo .etapa:nth-child(2) { transition-delay: 80ms; }
+  .js .processo .etapa:nth-child(3) { transition-delay: 160ms; }
+  .js .processo .etapa:nth-child(4) { transition-delay: 240ms; }
+  .js .solucoes .solucao:nth-child(2) { transition-delay: 80ms; }
+  .js .solucoes .solucao:nth-child(3) { transition-delay: 160ms; }
 }
 
 /* ---------- Botões ---------- */
@@ -155,12 +202,13 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   transition: background-color var(--t-rapida) var(--ease),
               border-color var(--t-rapida) var(--ease),
               color var(--t-rapida) var(--ease),
-              transform var(--t-rapida) var(--ease);
+              transform var(--t-rapida) var(--ease),
+              box-shadow var(--t-rapida) var(--ease);
 }
 .botao:active { transform: translateY(1px); }
 .botao--grande { min-height: 56px; padding: 14px 28px; font-size: 1rem; }
-.botao--primario { background: var(--petroleo); color: var(--branco); }
-.botao--primario:hover { background: var(--petroleo-escuro); }
+.botao--primario { background: var(--petroleo); color: var(--branco); box-shadow: 0 8px 20px -12px rgba(23, 75, 82, 0.6); }
+.botao--primario:hover { background: var(--petroleo-escuro); box-shadow: 0 12px 24px -12px rgba(23, 75, 82, 0.7); }
 .botao--secundario { background: transparent; color: var(--petroleo); border-color: var(--borda-forte); }
 .botao--secundario:hover { border-color: var(--petroleo); background: rgba(23, 75, 82, 0.06); }
 .secao--petroleo .botao--secundario { color: var(--marfim); border-color: rgba(244, 240, 232, 0.4); }
@@ -248,16 +296,28 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .hero {
   position: relative;
   overflow: hidden;
-  padding-block: clamp(40px, 7vw, 96px) clamp(32px, 5vw, 56px);
+  padding-block: clamp(40px, 6vw, 80px) clamp(32px, 5vw, 56px);
+}
+/* um campo de marfim mais fundo atrás do logo, para o símbolo ter chão */
+.hero::before {
+  content: "";
+  position: absolute;
+  right: -12vw; top: -10%;
+  width: clamp(420px, 56vw, 880px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, var(--marfim-escuro) 0 58%, transparent 60%);
+  opacity: 0.8;
+  pointer-events: none;
 }
 .hero__grid {
   display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
   align-items: center;
-  gap: clamp(24px, 4vw, 64px);
-  min-height: clamp(420px, 56vh, 620px);
+  gap: clamp(24px, 4vw, 56px);
+  min-height: clamp(460px, 60vh, 680px);
 }
-.hero__texto { max-width: 40rem; }
+.hero__texto { max-width: 38rem; }
 .hero__texto .lead { max-width: 30em; }
 .hero__acoes {
   display: flex;
@@ -266,32 +326,33 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   margin-top: 40px;
 }
 
-/* A arte do hero: dois campos de petróleo que se encontram e a conexão em coral (manual, p. 17 e 19) */
-.hero__arte {
-  position: relative;
-  align-self: stretch;
-  min-height: 360px;
-  /* a arte encosta na borda direita da página, como no manual */
-  margin-right: calc(-1 * var(--gutter));
+/* O logo líquido: o filtro fica restrito a este SVG. */
+.hero__logo {
+  width: min(100%, 620px);
+  margin-inline: auto;
+  aspect-ratio: 800 / 720;
+  color: var(--grafite);
 }
-@media (min-width: 1300px) {
-  .hero__arte { margin-right: calc(-1 * (100vw - var(--largura)) / 2); }
+.logo-liquido { display: block; width: 100%; height: 100%; }
+.logo-liquido .liquido .conexao { animation: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-liquido .liquido { filter: none; }
+  .logo-liquido .liquido__gotas,
+  .logo-liquido .liquido__bolha-coral { display: none; }
 }
-.hero__arte .campos {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+
+/* A conexão coral acende quando o campo assenta (seções com os campos ao fundo) */
+.campos__conexao, .conexao {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: conectar 420ms var(--ease) both;
+  animation-delay: 950ms;
 }
-.campo { transform-box: fill-box; transform-origin: center; }
-@media (prefers-reduced-motion: no-preference) {
-  .campo--a { animation: subir 720ms var(--ease) both; }
-  .campo--b { animation: chegar 720ms var(--ease) both; animation-delay: 80ms; }
-  .conexao { transform-box: fill-box; transform-origin: center; animation: conectar 420ms var(--ease) both; animation-delay: 640ms; }
+@keyframes conectar {
+  from { transform: scale(0.7); opacity: 0.35; }
+  to   { transform: scale(1); opacity: 1; }
 }
-@keyframes subir { from { transform: translateY(60px); opacity: 0; } to { transform: none; opacity: 1; } }
-@keyframes chegar { from { transform: translateX(80px); opacity: 0; } to { transform: none; opacity: 1; } }
-@keyframes conectar { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
 /* Faixa de síntese sob o hero */
 .faixa {
@@ -299,19 +360,51 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   grid-template-columns: repeat(3, 1fr);
   gap: 24px 32px;
   margin-top: clamp(24px, 4vw, 48px);
-  padding-top: 24px;
+  padding-top: 28px;
   border-top: 1px solid var(--borda);
 }
-.faixa li { display: grid; gap: 4px; padding-left: 16px; border-left: 2px solid var(--petroleo); }
+.faixa li { display: grid; gap: 4px; padding-left: 18px; border-left: 2px solid var(--petroleo); }
 .faixa li:last-child { border-left-color: var(--coral); }
 .faixa strong { font-weight: 600; font-size: 0.9375rem; }
 .faixa span { font-size: 0.875rem; color: var(--texto-suave); }
 
 @media (max-width: 900px) {
-  .hero__grid { grid-template-columns: 1fr; min-height: 0; }
-  .hero__arte { min-height: 260px; margin-inline: calc(-1 * var(--gutter)); }
-  .hero__texto .display { font-size: clamp(2.25rem, 9vw, 3rem); }
+  .hero::before { right: -30vw; top: auto; bottom: -10%; width: 110vw; }
+  .hero__grid { grid-template-columns: 1fr; min-height: 0; gap: 8px; }
+  .hero__logo { width: min(100%, 420px); }
+  .hero__texto .display { font-size: clamp(2.5rem, 10vw, 3.25rem); }
   .faixa { grid-template-columns: 1fr; gap: 16px; }
+}
+
+/* ---------- Palavras (os quatro verbos) ---------- */
+
+.palavras {
+  background: var(--marfim-escuro);
+  padding-block: clamp(48px, 7vw, 88px);
+  text-align: center;
+  border-top: 1px solid rgba(32, 37, 43, 0.06);
+  border-bottom: 1px solid rgba(32, 37, 43, 0.06);
+}
+.palavras__lista {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px 24px;
+  font-size: clamp(1.75rem, 5.6vw, 4rem);
+  line-height: 1.1;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--grafite);
+}
+.palavras__lista span:nth-child(5) { color: var(--petroleo); }
+.palavras__lista span:last-child { color: var(--petroleo); }
+.palavras__no {
+  display: inline-block;
+  width: 0.28em; height: 0.28em;
+  border-radius: 50%;
+  background: var(--coral);
+  box-shadow: 0 0 0 0.12em rgba(217, 103, 90, 0.18);
 }
 
 /* ---------- Produtos ---------- */
@@ -319,33 +412,62 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .produtos {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
+  gap: 28px;
 }
 .produto {
+  position: relative;
   background: var(--branco);
   border: 1px solid var(--borda);
-  border-radius: var(--r-card);
-  padding: clamp(24px, 3vw, 40px);
+  border-radius: 20px;
+  overflow: hidden;
   display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  gap: 20px;
-  transition: border-color var(--t-padrao) var(--ease), box-shadow var(--t-padrao) var(--ease);
+  grid-template-rows: auto 1fr;
+  transition: border-color var(--t-padrao) var(--ease), transform var(--t-padrao) var(--ease), box-shadow var(--t-padrao) var(--ease);
 }
-.produto:hover { border-color: var(--petroleo); box-shadow: 0 12px 32px -20px rgba(23, 75, 82, 0.35); }
+.produto:hover { border-color: var(--petroleo); transform: translateY(-4px); box-shadow: 0 24px 48px -28px rgba(23, 75, 82, 0.45); }
 
-.produto__marca { display: flex; align-items: center; gap: 16px; }
+/* a cabeça do cartão: dois campos de petróleo que se encontram, com o nó coral no encontro */
+.produto__cabeca {
+  position: relative;
+  min-height: 168px;
+  padding: 24px 28px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  background:
+    radial-gradient(circle at 88% 128%, var(--petroleo-escuro) 0 36%, transparent 36.6%),
+    radial-gradient(circle at 118% -34%, var(--petroleo-escuro) 0 44%, transparent 44.6%),
+    var(--petroleo);
+  color: var(--marfim);
+}
+.produto__cabeca::after {
+  content: "";
+  position: absolute;
+  right: 22%; top: 42%;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--coral);
+  box-shadow: 0 0 0 6px rgba(217, 103, 90, 0.2);
+}
 .produto__tile {
-  width: 64px; height: 64px;
-  border-radius: 16px;
-  background: var(--petroleo);
+  width: 72px; height: 72px;
+  border-radius: 18px;
+  background: rgba(244, 240, 232, 0.12);
+  border: 1px solid rgba(244, 240, 232, 0.25);
   display: grid; place-items: center;
   flex-shrink: 0;
+  backdrop-filter: blur(4px);
 }
 .produto__tile svg { width: 40px; height: 40px; }
-.produto__tile--vazio { background: transparent; border: 1px dashed var(--borda-forte); }
-.produto__tile--vazio svg { width: 26px; height: 26px; color: var(--texto-suave); }
+.produto__plataforma {
+  font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(244, 240, 232, 0.8);
+  padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(244, 240, 232, 0.28);
+}
+.produto__corpo { display: grid; gap: 18px; padding: clamp(24px, 3vw, 36px); align-content: start; }
 .produto__nome { display: grid; gap: 2px; }
-.produto__nome .titulo-card { font-size: 1.5rem; }
+.produto__nome .titulo-card { font-size: 1.625rem; letter-spacing: -0.015em; }
 .produto__endosso { font-size: 0.8125rem; color: var(--texto-suave); }
 .produto__descricao { color: var(--texto-suave); max-width: 36em; }
 
@@ -360,31 +482,23 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   color: var(--grafite);
 }
 
-.produto__rodape {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding-top: 20px;
-  border-top: 1px solid var(--borda);
-}
-.plataforma {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-size: 0.875rem; color: var(--texto-suave); font-weight: 500;
-}
-.plataforma svg { width: 18px; height: 18px; }
+.produto__rodape { display: flex; align-items: center; justify-content: flex-start; padding-top: 4px; }
 
 .produto--proximo {
   grid-column: 1 / -1;
   grid-template-rows: none;
   grid-template-columns: auto 1fr auto;
   align-items: center;
+  gap: 20px;
+  padding: clamp(20px, 3vw, 28px);
   background: transparent;
   border-style: dashed;
   border-color: var(--borda-forte);
+  border-radius: var(--r-card);
 }
-.produto--proximo:hover { border-color: var(--borda-forte); box-shadow: none; }
+.produto--proximo:hover { border-color: var(--borda-forte); box-shadow: none; transform: none; }
+.produto--proximo .produto__tile { background: transparent; border: 1px dashed var(--borda-forte); backdrop-filter: none; width: 64px; height: 64px; }
+.produto--proximo .produto__tile svg { width: 26px; height: 26px; color: var(--texto-suave); }
 .produto--proximo .produto__nome { gap: 6px; }
 
 @media (max-width: 900px) {
@@ -394,6 +508,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 }
 @media (max-width: 560px) {
   .produto--proximo { grid-template-columns: 1fr; }
+  .produto__cabeca { min-height: 140px; }
 }
 
 /* ---------- Soluções ---------- */
@@ -430,62 +545,92 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .solucao + .solucao { padding-left: 0; border-left: 0; }
 }
 
-/* ---------- Processo ---------- */
+/* ---------- Processo (quatro momentos ligados por uma linha com nós) ---------- */
 
 .processo {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 24px;
+  padding-top: 20px;
+}
+/* a linha que liga os nós */
+.processo::before {
+  content: "";
+  position: absolute;
+  left: 44px; right: 44px; top: 40px;
+  height: 2px;
+  background: var(--borda-forte);
 }
 .etapa {
   position: relative;
-  padding: 28px 24px;
-  background: var(--marfim);
-  border-radius: var(--r-card);
   display: grid;
   gap: 12px;
   align-content: start;
 }
-.etapa::before {
-  content: ""; position: absolute; left: 24px; right: 24px; top: 0;
-  height: 2px; background: var(--petroleo); border-radius: 0 0 2px 2px;
+.etapa__no {
+  display: grid; place-items: center;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--petroleo);
+  color: var(--marfim);
+  font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 0 0 6px var(--branco);
+  position: relative;
+  margin-bottom: 12px;
 }
-.etapa__numero {
-  font-size: 0.75rem; font-weight: 500; letter-spacing: 0.14em;
-  color: var(--coral); font-variant-numeric: tabular-nums;
-  padding-top: 8px;
-}
+.etapa--coral .etapa__no { background: var(--coral-acao); }
+.etapa .titulo-card { font-size: 1.125rem; }
 .etapa__texto { color: var(--texto-suave); }
 .etapa__entrega {
-  margin-top: 8px;
-  padding-top: 12px;
-  border-top: 1px solid var(--borda);
+  margin-top: 4px;
+  padding: 14px 16px;
+  background: var(--marfim);
+  border-radius: var(--r-card);
   font-size: 0.875rem;
   color: var(--grafite);
 }
 .etapa__entrega span { display: block; font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--petroleo); margin-bottom: 4px; font-weight: 500; }
 
-@media (max-width: 1000px) { .processo { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 560px) { .processo { grid-template-columns: 1fr; } }
+@media (max-width: 1000px) {
+  .processo { grid-template-columns: 1fr; gap: 32px; padding-left: 22px; padding-top: 0; }
+  .processo::before { left: 21px; right: auto; top: 0; bottom: 0; width: 2px; height: auto; }
+  .etapa { padding-left: 44px; }
+  .etapa__no { position: absolute; left: -22px; top: -2px; margin: 0; }
+}
 
 /* ---------- Manifesto ---------- */
 
 .manifesto {
+  position: relative;
+  overflow: hidden;
   background: var(--grafite);
   color: var(--marfim);
-  padding-block: clamp(64px, 10vw, 128px);
+  padding-block: clamp(80px, 11vw, 152px);
+  border-bottom-left-radius: var(--r-campo);
+}
+/* os campos ficam embaixo do título, à esquerda, sem passar por trás do texto */
+.manifesto__campos {
+  position: absolute;
+  left: 0; bottom: 0;
+  width: min(46%, 620px);
+  height: 58%;
+  opacity: 0.6;
+  pointer-events: none;
 }
 .manifesto__grid {
   display: grid;
-  grid-template-columns: 5fr 7fr;
+  grid-template-columns: 6fr 6fr;
   gap: clamp(32px, 6vw, 96px);
   align-items: start;
+  min-height: 420px;
 }
 .manifesto__titulo {
-  font-size: clamp(2.25rem, 5vw, 3.75rem);
-  line-height: 1.05;
+  font-size: clamp(2.5rem, 5.6vw, 4.25rem);
+  line-height: 1.02;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   margin: 0;
   text-wrap: balance;
 }
@@ -497,21 +642,45 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   font-size: 1.125rem;
   color: rgba(244, 240, 232, 0.85);
 }
-.manifesto__texto { display: grid; gap: 20px; font-size: clamp(1.0625rem, 1.5vw, 1.25rem); line-height: 1.55; color: rgba(244, 240, 232, 0.85); }
+.manifesto__texto { display: grid; gap: 20px; font-size: clamp(1.0625rem, 1.5vw, 1.25rem); line-height: 1.55; color: rgba(244, 240, 232, 0.88); max-width: 32em; }
 
-@media (max-width: 900px) { .manifesto__grid { grid-template-columns: 1fr; } }
+@media (max-width: 900px) {
+  .manifesto { padding-bottom: clamp(200px, 40vw, 280px); }
+  .manifesto__grid { grid-template-columns: 1fr; min-height: 0; }
+  .manifesto__campos { width: 100%; height: clamp(180px, 36vw, 260px); opacity: 0.5; }
+}
 
 /* ---------- Sobre ---------- */
 
 .sobre {
   display: grid;
-  grid-template-columns: 5fr 7fr;
+  grid-template-columns: 6fr 6fr;
   gap: clamp(32px, 6vw, 96px);
   align-items: start;
 }
-.sobre__texto { display: grid; gap: 20px; max-width: 40em; }
+.sobre__texto { display: grid; gap: 20px; max-width: 40em; margin-top: 24px; }
 .sobre__texto p { color: var(--texto-suave); font-size: 1.0625rem; }
 .sobre__texto p strong { color: var(--grafite); font-weight: 500; }
+
+/* a leitura do símbolo */
+.leitura {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 24px 32px;
+  align-items: center;
+  padding: clamp(24px, 3vw, 36px);
+  background: var(--branco);
+  border: 1px solid var(--borda);
+  border-radius: 20px;
+}
+.leitura__simbolo { width: clamp(120px, 14vw, 180px); height: auto; aspect-ratio: 208 / 190; color: var(--grafite); }
+.leitura__itens { display: grid; gap: 14px; }
+.leitura__itens div { display: grid; gap: 2px; padding-left: 18px; position: relative; }
+.leitura__itens div::before { content: ""; position: absolute; left: 0; top: 9px; width: 8px; height: 8px; border-radius: 50%; background: var(--petroleo); }
+.leitura__itens div:nth-child(2)::before { background: var(--coral); }
+.leitura__itens dt { font-weight: 600; font-size: 0.9375rem; color: var(--grafite); }
+.leitura__itens dd { font-size: 0.9375rem; color: var(--texto-suave); }
+.leitura__nota { grid-column: 1 / -1; font-size: 0.8125rem; color: var(--texto-suave); padding-top: 16px; border-top: 1px solid var(--borda); }
 
 .principios {
   margin-top: clamp(48px, 6vw, 80px);
@@ -531,7 +700,10 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .sobre { grid-template-columns: 1fr; }
   .principios { grid-template-columns: repeat(2, 1fr); }
 }
-@media (max-width: 480px) { .principios { grid-template-columns: 1fr; } }
+@media (max-width: 560px) {
+  .principios { grid-template-columns: 1fr; }
+  .leitura { grid-template-columns: 1fr; justify-items: start; }
+}
 
 /* ---------- Contato ---------- */
 
@@ -556,10 +728,11 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .formulario {
   background: var(--branco);
   color: var(--texto);
-  border-radius: var(--r-card);
+  border-radius: 20px;
   padding: clamp(24px, 3vw, 40px);
   display: grid;
   gap: 20px;
+  box-shadow: 0 32px 64px -40px rgba(0, 0, 0, 0.5);
 }
 .campo { display: grid; gap: 8px; }
 .campo label { font-size: 0.875rem; font-weight: 500; }
@@ -593,11 +766,12 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 /* ---------- Rodapé ---------- */
 
 .rodape {
-  background: var(--grafite);
+  position: relative;
+  overflow: hidden;
+  background: var(--grafite-escuro);
   color: rgba(244, 240, 232, 0.72);
-  padding-block: 56px 32px;
+  padding-block: 64px 32px;
   font-size: 0.875rem;
-  border-top: 1px solid rgba(244, 240, 232, 0.08);
 }
 .rodape__grid {
   display: grid;

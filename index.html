@@ -54,6 +54,12 @@
     <path fill="currentColor" d="M 19.626 102.833 C 13.698 97.670 15.375 75.020 22.832 59.511 C 35.301 33.578 65.811 13.216 95.083 11.290 C 107.818 10.452 109.788 13.187 106.532 27.188 C 97.951 64.099 73.954 89.482 36.000 101.794 C 25.048 105.347 22.685 105.497 19.626 102.833 Z"/>
     <path fill="#D9675A" d="M 106.406 91.896 C 103.259 88.419 96.353 84.885 91.289 84.160 C 84.664 83.213 84.699 81.385 91.499 73.370 C 94.602 69.713 98.516 64.284 100.196 61.307 C 105.272 52.313 108.094 54.125 109.841 67.500 C 110.416 71.900 111.993 78.872 113.347 82.994 C 115.074 88.251 115.528 91.013 114.869 92.244 C 113.565 94.682 108.748 94.484 106.406 91.896 Z"/>
   </symbol>
+  <!-- Só as três partes, sem a conexão: marca d'água das seções -->
+  <symbol id="partes-ahninat" viewBox="0 0 208 190">
+    <path fill="currentColor" d="M 81.539 174.956 C 50.827 170.129 24.033 147.661 21.370 124.500 C 20.798 119.527 23.292 114.000 26.107 114.000 C 28.151 114.000 51.191 104.453 65.389 97.724 C 92.182 85.025 102.701 89.471 113.362 118.000 C 114.698 121.575 118.031 130.350 120.769 137.500 C 130.599 163.169 130.800 166.465 122.788 170.611 C 114.519 174.889 94.517 176.996 81.539 174.956 Z"/>
+    <path fill="currentColor" d="M 155.415 135.601 C 126.554 105.433 114.000 78.176 114.000 45.681 C 114.000 17.400 119.236 10.240 134.663 17.424 C 157.927 28.255 173.318 46.556 180.143 71.500 C 183.323 83.123 183.345 106.719 180.187 119.387 C 174.154 143.594 167.333 148.058 155.415 135.601 Z"/>
+    <path fill="currentColor" d="M 19.626 102.833 C 13.698 97.670 15.375 75.020 22.832 59.511 C 35.301 33.578 65.811 13.216 95.083 11.290 C 107.818 10.452 109.788 13.187 106.532 27.188 C 97.951 64.099 73.954 89.482 36.000 101.794 C 25.048 105.347 22.685 105.497 19.626 102.833 Z"/>
+  </symbol>
 </svg>
 
 <header class="topo" id="topo">
@@ -83,8 +89,8 @@
   <section class="hero" id="inicio" aria-labelledby="titulo-hero">
     <div class="container hero__grid">
       <div class="hero__texto">
-        <p class="eyebrow">Estúdio de tecnologia e produtos digitais</p>
-        <h1 class="display" id="titulo-hero">Tecnologia que sustenta o próximo passo.</h1>
+        <p class="eyebrow"><span class="no" aria-hidden="true"></span>Estúdio de tecnologia e produtos digitais</p>
+        <h1 class="display" id="titulo-hero">Tecnologia que sustenta o <em>próximo passo.</em></h1>
         <p class="lead">Conectamos estratégia, design e desenvolvimento para criar soluções claras, úteis e preparadas para evoluir com o seu negócio.</p>
         <div class="hero__acoes">
           <a class="botao botao--primario botao--grande" href="#contato">Converse sobre seu projeto</a>
@@ -92,13 +98,43 @@
         </div>
       </div>
 
-      <!-- Sistema gráfico do manual: campos que se encontram e a conexão em coral -->
-      <div class="hero__arte" aria-hidden="true">
-        <svg class="campos" viewBox="0 0 640 620" preserveAspectRatio="xMaxYMax slice">
-          <path class="campo campo--a" fill="#174B52" d="M-60 660 V 320 C 150 310 330 410 400 660 Z"/>
-          <path class="campo campo--b" fill="#174B52" d="M700 -40 C 500 40 426 300 424 660 H 700 Z"/>
-          <path class="conexao" fill="#D9675A" stroke="#D9675A" stroke-width="7" stroke-linejoin="round" d="M 391 344 L 452 338 L 421 282 Z"/>
-        </svg>
+      <!-- O símbolo em escala grande, com o efeito líquido: as partes se encontram e a conexão coral vive. -->
+      <div class="hero__logo">
+      <svg class="logo-liquido" viewBox="0 0 800 720" role="img"
+           aria-label="Símbolo Ahninat: três partes que se encontram em um ponto coral">
+        <defs>
+          <filter id="liquido" filterUnits="userSpaceOnUse" x="0" y="0" width="800" height="720" color-interpolation-filters="sRGB">
+            <feTurbulence id="liquido-ondas" type="fractalNoise" baseFrequency="0.006 0.008" numOctaves="1" seed="11" result="ondas"/>
+            <feDisplacementMap id="desloc" in="SourceGraphic" in2="ondas" scale="6" xChannelSelector="R" yChannelSelector="G" result="forma"/>
+            <!-- Blur + contraste no alfa unem e separam as gotas como um liquido viscoso. -->
+            <feGaussianBlur in="forma" stdDeviation="4.5" result="suave"/>
+            <feColorMatrix in="suave" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9" result="goo"/>
+            <feComposite in="forma" in2="goo" operator="atop"/>
+          </filter>
+        </defs>
+        <g class="liquido" filter="url(#liquido)">
+          <g transform="translate(25 18) scale(3.6)">
+            <g class="liquido__gotas" fill="currentColor" aria-hidden="true">
+              <g data-parte="2" data-raio="3.2" data-comprimento="8" data-queda="14" data-periodo="5.8" opacity="0">
+                <path/><ellipse rx="0" ry="0"/>
+              </g>
+              <g data-parte="1" data-raio="3.7" data-comprimento="11" data-queda="13" data-periodo="7.2" opacity="0">
+                <path/><ellipse rx="0" ry="0"/>
+              </g>
+              <g data-parte="0" data-raio="3.5" data-comprimento="7" data-queda="7" data-periodo="8.4" opacity="0">
+                <path/><ellipse rx="0" ry="0"/>
+              </g>
+            </g>
+            <g class="liquido__bolha-coral" fill="#D9675A" aria-hidden="true" opacity="0">
+              <path/><ellipse rx="0" ry="0"/>
+            </g>
+            <path fill="currentColor" d="M 81.539 174.956 C 50.827 170.129 24.033 147.661 21.370 124.500 C 20.798 119.527 23.292 114.000 26.107 114.000 C 28.151 114.000 51.191 104.453 65.389 97.724 C 92.182 85.025 102.701 89.471 113.362 118.000 C 114.698 121.575 118.031 130.350 120.769 137.500 C 130.599 163.169 130.800 166.465 122.788 170.611 C 114.519 174.889 94.517 176.996 81.539 174.956 Z"/>
+            <path fill="currentColor" d="M 155.415 135.601 C 126.554 105.433 114.000 78.176 114.000 45.681 C 114.000 17.400 119.236 10.240 134.663 17.424 C 157.927 28.255 173.318 46.556 180.143 71.500 C 183.323 83.123 183.345 106.719 180.187 119.387 C 174.154 143.594 167.333 148.058 155.415 135.601 Z"/>
+            <path fill="currentColor" d="M 19.626 102.833 C 13.698 97.670 15.375 75.020 22.832 59.511 C 35.301 33.578 65.811 13.216 95.083 11.290 C 107.818 10.452 109.788 13.187 106.532 27.188 C 97.951 64.099 73.954 89.482 36.000 101.794 C 25.048 105.347 22.685 105.497 19.626 102.833 Z"/>
+            <path class="conexao" fill="#D9675A" d="M 106.406 91.896 C 103.259 88.419 96.353 84.885 91.289 84.160 C 84.664 83.213 84.699 81.385 91.499 73.370 C 94.602 69.713 98.516 64.284 100.196 61.307 C 105.272 52.313 108.094 54.125 109.841 67.500 C 110.416 71.900 111.993 78.872 113.347 82.994 C 115.074 88.251 115.528 91.013 114.869 92.244 C 113.565 94.682 108.748 94.484 106.406 91.896 Z"/>
+          </g>
+        </g>
+      </svg>
       </div>
     </div>
 
@@ -111,48 +147,60 @@
     </div>
   </section>
 
+  <!-- PALAVRAS -->
+  <section class="palavras" aria-label="Nosso processo em quatro verbos">
+    <div class="container">
+      <p class="eyebrow eyebrow--centro"><span class="no" aria-hidden="true"></span>Nosso processo</p>
+      <p class="palavras__lista" data-revelar>
+        <span>Entender.</span><i class="palavras__no" aria-hidden="true"></i>
+        <span>Conectar.</span><i class="palavras__no" aria-hidden="true"></i>
+        <span>Construir.</span><i class="palavras__no" aria-hidden="true"></i>
+        <span>Evoluir.</span>
+      </p>
+    </div>
+  </section>
+
   <!-- PRODUTOS -->
   <section class="secao secao--branco" id="produtos" aria-labelledby="titulo-produtos">
     <div class="container">
       <div class="cabecalho-secao" data-revelar>
-        <p class="eyebrow">Produtos por Ahninat</p>
+        <p class="eyebrow"><span class="no" aria-hidden="true"></span>Produtos por Ahninat</p>
         <h2 class="titulo-secao" id="titulo-produtos">Conhecimento simbólico com método, transparência e cuidado.</h2>
         <p class="lead">Aplicativos autorais que tratam astrologia e numerologia como práticas interpretativas: cálculos rastreáveis e leituras que respeitam o contexto de cada pessoa.</p>
       </div>
 
       <div class="produtos">
         <article class="produto" data-revelar>
-          <div class="produto__marca">
+          <div class="produto__cabeca">
             <div class="produto__tile">
               <svg viewBox="0 0 40 40" fill="none" stroke="#F4F0E8" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <circle cx="20" cy="20" r="13"/><circle cx="20" cy="20" r="4" fill="#D9675A" stroke="none"/>
                 <path d="M20 3v4M20 33v4M3 20h4M33 20h4"/><circle cx="29" cy="11" r="1.6" fill="#F4F0E8" stroke="none"/>
               </svg>
             </div>
+            <span class="produto__plataforma">Aplicativo para iPhone</span>
+          </div>
+          <div class="produto__corpo">
             <div class="produto__nome">
               <h3 class="titulo-card">Astrologic</h3>
               <span class="produto__endosso">por Ahninat</span>
             </div>
-          </div>
-          <p class="produto__descricao">Astrologia com base clássica e interpretações personalizadas. Mapa natal, trânsitos, sinastria, astrologia horária e revolução solar numa experiência feita para o dia a dia, não só para especialistas.</p>
-          <ul class="chips" aria-label="Recursos do Astrologic">
-            <li>Mapa natal</li>
-            <li>Trânsitos e previsões</li>
-            <li>Sinastria</li>
-            <li>Horária</li>
-            <li>Revolução solar</li>
-          </ul>
-          <div class="produto__rodape">
-            <span class="plataforma">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>
-              Aplicativo para iPhone
-            </span>
-            <a class="botao botao--secundario" href="#contato" data-produto="Astrologic">Quero saber mais</a>
+            <p class="produto__descricao">Astrologia com base clássica e interpretações personalizadas. Mapa natal, trânsitos, sinastria, astrologia horária e revolução solar numa experiência feita para o dia a dia, não só para especialistas.</p>
+            <ul class="chips" aria-label="Recursos do Astrologic">
+              <li>Mapa natal</li>
+              <li>Trânsitos e previsões</li>
+              <li>Sinastria</li>
+              <li>Horária</li>
+              <li>Revolução solar</li>
+            </ul>
+            <div class="produto__rodape">
+              <a class="botao botao--secundario" href="#contato" data-produto="Astrologic">Quero saber mais</a>
+            </div>
           </div>
         </article>
 
         <article class="produto" data-revelar>
-          <div class="produto__marca">
+          <div class="produto__cabeca">
             <div class="produto__tile">
               <svg viewBox="0 0 40 40" aria-hidden="true">
                 <g fill="#F4F0E8">
@@ -163,24 +211,23 @@
                 <circle cx="20" cy="20" r="4" fill="#D9675A"/>
               </svg>
             </div>
+            <span class="produto__plataforma">Aplicativo e plataforma web</span>
+          </div>
+          <div class="produto__corpo">
             <div class="produto__nome">
               <h3 class="titulo-card">Numerologic</h3>
               <span class="produto__endosso">por Ahninat</span>
             </div>
-          </div>
-          <p class="produto__descricao">Numerologia comparada, modular e auditável. Cada número informa a escola, a tabela e a regra de redução usadas, e responde a “como este número foi calculado?” com todas as etapas.</p>
-          <ul class="chips" aria-label="Recursos do Numerologic">
-            <li>Caminho de vida</li>
-            <li>Expressão, alma e personalidade</li>
-            <li>Ano, mês e dia pessoal</li>
-            <li>Cálculo passo a passo</li>
-          </ul>
-          <div class="produto__rodape">
-            <span class="plataforma">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>
-              Aplicativo e plataforma web
-            </span>
-            <a class="botao botao--secundario" href="#contato" data-produto="Numerologic">Quero saber mais</a>
+            <p class="produto__descricao">Numerologia comparada, modular e auditável. Cada número informa a escola, a tabela e a regra de redução usadas, e responde a “como este número foi calculado?” com todas as etapas.</p>
+            <ul class="chips" aria-label="Recursos do Numerologic">
+              <li>Caminho de vida</li>
+              <li>Expressão, alma e personalidade</li>
+              <li>Ano, mês e dia pessoal</li>
+              <li>Cálculo passo a passo</li>
+            </ul>
+            <div class="produto__rodape">
+              <a class="botao botao--secundario" href="#contato" data-produto="Numerologic">Quero saber mais</a>
+            </div>
           </div>
         </article>
 
@@ -199,10 +246,11 @@
   </section>
 
   <!-- SOLUÇÕES -->
-  <section class="secao secao--petroleo" id="solucoes" aria-labelledby="titulo-solucoes">
+  <section class="secao secao--petroleo secao--canto-esquerdo" id="solucoes" aria-labelledby="titulo-solucoes">
+    <svg class="marca-dagua marca-dagua--direita" aria-hidden="true"><use href="#partes-ahninat"/></svg>
     <div class="container">
       <div class="cabecalho-secao" data-revelar>
-        <p class="eyebrow eyebrow--claro">Soluções para o seu negócio</p>
+        <p class="eyebrow eyebrow--claro"><span class="no" aria-hidden="true"></span>Soluções para o seu negócio</p>
         <h2 class="titulo-secao" id="titulo-solucoes">Estratégia, design e tecnologia para produtos digitais.</h2>
         <p class="lead">Além dos produtos próprios, construímos soluções sob medida para empresas que precisam criar ou evoluir experiências digitais.</p>
       </div>
@@ -245,32 +293,32 @@
   <section class="secao secao--branco" id="processo" aria-labelledby="titulo-processo">
     <div class="container">
       <div class="cabecalho-secao" data-revelar>
-        <p class="eyebrow">Como trabalhamos</p>
+        <p class="eyebrow"><span class="no" aria-hidden="true"></span>Como trabalhamos</p>
         <h2 class="titulo-secao" id="titulo-processo">O cuidado também organiza o processo.</h2>
-        <p class="lead">A sensação de solidez se repete antes, durante e depois da entrega. Estes são os quatro momentos de todo projeto.</p>
+        <p class="lead">A sensação de solidez se repete antes, durante e depois da entrega. Estes são os quatro momentos de todo projeto, ligados um ao outro.</p>
       </div>
 
       <ol class="processo">
         <li class="etapa" data-revelar>
-          <span class="etapa__numero" aria-hidden="true">01</span>
+          <span class="etapa__no" aria-hidden="true">01</span>
           <h3 class="titulo-card">Primeiro contato</h3>
           <p class="etapa__texto">Escutamos o contexto e devolvemos uma síntese do problema.</p>
           <p class="etapa__entrega"><span>Você recebe</span>perguntas objetivas e um próximo passo claro.</p>
         </li>
         <li class="etapa" data-revelar>
-          <span class="etapa__numero" aria-hidden="true">02</span>
+          <span class="etapa__no" aria-hidden="true">02</span>
           <h3 class="titulo-card">Proposta</h3>
           <p class="etapa__texto">Explicamos o que será feito, por que será feito e como será validado.</p>
           <p class="etapa__entrega"><span>Você recebe</span>escopo, investimento e responsabilidades.</p>
         </li>
         <li class="etapa" data-revelar>
-          <span class="etapa__numero" aria-hidden="true">03</span>
+          <span class="etapa__no" aria-hidden="true">03</span>
           <h3 class="titulo-card">Construção</h3>
           <p class="etapa__texto">Damos visibilidade às decisões, aos avanços e às dependências.</p>
           <p class="etapa__entrega"><span>Você recebe</span>demonstrações, registros e um canal definido.</p>
         </li>
-        <li class="etapa" data-revelar>
-          <span class="etapa__numero" aria-hidden="true">04</span>
+        <li class="etapa etapa--coral" data-revelar>
+          <span class="etapa__no" aria-hidden="true">04</span>
           <h3 class="titulo-card">Continuidade</h3>
           <p class="etapa__texto">Orientamos o uso e combinamos como a solução será acompanhada.</p>
           <p class="etapa__entrega"><span>Você recebe</span>documentação, transição e um acordo de evolução.</p>
@@ -281,16 +329,22 @@
 
   <!-- MANIFESTO -->
   <section class="manifesto" id="manifesto" aria-labelledby="titulo-manifesto">
+    <!-- Campos que se encontram, ao fundo, com a conexão coral -->
+    <svg class="manifesto__campos" viewBox="0 0 640 620" preserveAspectRatio="xMinYMax slice" aria-hidden="true">
+      <path fill="#174B52" d="M-60 660 V 320 C 150 310 330 410 400 660 Z"/>
+      <path fill="#174B52" d="M700 -40 C 500 40 426 300 424 660 H 700 Z"/>
+      <path class="campos__conexao" fill="#D9675A" stroke="#D9675A" stroke-width="7" stroke-linejoin="round" d="M 391 344 L 452 338 L 421 282 Z"/>
+    </svg>
     <div class="container manifesto__grid">
       <div data-revelar>
-        <p class="eyebrow eyebrow--coral">O fundamento</p>
+        <p class="eyebrow eyebrow--coral"><span class="no" aria-hidden="true"></span>O fundamento</p>
         <h2 class="manifesto__titulo" id="titulo-manifesto">Toda trajetória tem valor.</h2>
-        <p class="manifesto__assinatura">Sensibilidade na intenção.<br>Consistência na construção.</p>
       </div>
       <div class="manifesto__texto" data-revelar>
         <p>Toda trajetória reúne escolhas, descobertas e recomeços. Acreditamos que a tecnologia deve respeitar essa história e abrir espaço para o que ainda pode ser construído.</p>
         <p>Por isso, começamos pela escuta. Damos forma ao que é complexo. Conectamos o que precisa funcionar junto. E cuidamos das decisões que sustentam cada entrega.</p>
         <p>Criamos produtos e sistemas para pessoas reais, com necessidades reais e futuros em movimento.</p>
+        <p class="manifesto__assinatura">Sensibilidade na intenção.<br>Consistência na construção.</p>
       </div>
     </div>
   </section>
@@ -300,12 +354,23 @@
     <div class="container">
       <div class="sobre">
         <div data-revelar>
-          <p class="eyebrow">Sobre a Ahninat</p>
+          <p class="eyebrow"><span class="no" aria-hidden="true"></span>Sobre a Ahninat</p>
           <h2 class="titulo-secao" id="titulo-sobre">O que você já construiu importa. <em>O que vem depois também.</em></h2>
+          <div class="sobre__texto">
+            <p><strong>A Ahninat Studio é um estúdio de tecnologia e produtos digitais.</strong> Conectamos estratégia, design e desenvolvimento para criar soluções claras, úteis e preparadas para evoluir. Trabalhamos com proximidade e atenção ao contexto de cada negócio, do entendimento inicial à continuidade do projeto.</p>
+          </div>
         </div>
-        <div class="sobre__texto" data-revelar>
-          <p><strong>A Ahninat Studio é um estúdio de tecnologia e produtos digitais.</strong> Conectamos estratégia, design e desenvolvimento para criar soluções claras, úteis e preparadas para evoluir. Trabalhamos com proximidade e atenção ao contexto de cada negócio, do entendimento inicial à continuidade do projeto.</p>
-          <p>Nosso símbolo carrega essa ideia: três partes, pessoas, tecnologia e contexto, que se encontram num ponto de conexão. A inspiração vem do Kintsugi, no cuidado com o que existe e na visibilidade das conexões.</p>
+
+        <!-- A leitura do símbolo (manual, p. 5) -->
+        <div class="leitura" data-revelar>
+          <svg class="leitura__simbolo" aria-hidden="true"><use href="#simbolo-ahninat"/></svg>
+          <dl class="leitura__itens">
+            <div><dt>Três partes</dt><dd>Pessoas, tecnologia e contexto.</dd></div>
+            <div><dt>Encontro central</dt><dd>O cuidado que articula o conjunto.</dd></div>
+            <div><dt>Espaços entre as partes</dt><dd>Clareza, autonomia e abertura para evoluir.</dd></div>
+            <div><dt>Forma estável e orgânica</dt><dd>Estrutura técnica com sensibilidade humana.</dd></div>
+          </dl>
+          <p class="leitura__nota">A inspiração vem do Kintsugi: o cuidado com o que existe e a visibilidade das conexões.</p>
         </div>
       </div>
 
@@ -331,10 +396,11 @@
   </section>
 
   <!-- CONTATO -->
-  <section class="secao secao--petroleo" id="contato" aria-labelledby="titulo-contato">
+  <section class="secao secao--petroleo secao--canto-direito" id="contato" aria-labelledby="titulo-contato">
+    <svg class="marca-dagua marca-dagua--esquerda" aria-hidden="true"><use href="#partes-ahninat"/></svg>
     <div class="container contato">
       <div data-revelar>
-        <p class="eyebrow eyebrow--claro">Vamos conversar</p>
+        <p class="eyebrow eyebrow--claro"><span class="no" aria-hidden="true"></span>Vamos conversar</p>
         <h2 class="titulo-secao" id="titulo-contato">Conte o que você quer construir.</h2>
         <p class="lead">E o que precisa funcionar melhor. Vamos entender o contexto e definir, com você, um próximo passo viável.</p>
         <div class="contato__canais">
@@ -390,6 +456,7 @@
 </main>
 
 <footer class="rodape">
+  <svg class="marca-dagua marca-dagua--rodape" aria-hidden="true"><use href="#partes-ahninat"/></svg>
   <div class="container">
     <div class="rodape__grid">
       <div>
