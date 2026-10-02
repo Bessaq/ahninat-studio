@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://bessaq.github.io/ahninat-studio/sitemap.xml
