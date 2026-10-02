@@ -171,7 +171,12 @@ dl, dd { margin: 0; }
 }
 .marca-dagua--direita { right: -6%; top: -8%; }
 .marca-dagua--esquerda { left: -10%; bottom: -14%; }
-.marca-dagua--rodape { right: -4%; top: -30%; width: clamp(280px, 30vw, 440px); opacity: 0.05; }
+/* Rodapé: só a conexão coral (as três partes já aparecem na seção de contato, à esquerda) */
+.marca-dagua--rodape {
+  right: max(24px, 4%); top: 46%; transform: translateY(-50%);
+  width: clamp(120px, 12vw, 180px); aspect-ratio: 34 / 45;
+  color: var(--coral); opacity: 0.85;
+}
 
 /* Entrada suave ao rolar (o JS acrescenta .revelado; sem JS, tudo aparece) */
 @media (prefers-reduced-motion: no-preference) {
@@ -775,7 +780,7 @@ dl, dd { margin: 0; }
 }
 .rodape__grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr 180px; /* a última coluna fica vazia: é o lugar da peça coral */
   gap: 40px;
   padding-bottom: 40px;
   border-bottom: 1px solid rgba(244, 240, 232, 0.14);
