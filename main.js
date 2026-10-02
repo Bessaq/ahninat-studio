@@ -90,16 +90,19 @@ const CONFIG = {
   }
 
   // Cada filete acumula volume e se rompe na direcao escolhida para o fluxo.
-  const logo = document.querySelector(".logo-liquido");
-  const desloc = document.getElementById("desloc");
-  const ondas = document.getElementById("liquido-ondas");
-  if (logo && desloc && ondas) {
+  // O mesmo motor anima o símbolo do hero e a conexão coral do rodapé; os ajustes compensam
+  // a escala do viewBox de cada um (frequência das ondas, deslocamento, tamanho da bolha).
+  const TODAS_DIRECOES = [
+    { dx: 0, dy: 1, angulo: 0 },
+    { dx: 1, dy: 0, angulo: -90 },
+    { dx: -1, dy: 0, angulo: 90 }
+  ];
+  const animarLiquido = (logo, ajustes = {}) => {
+    const desloc = logo?.querySelector("feDisplacementMap");
+    const ondas = logo?.querySelector("feTurbulence");
+    if (!logo || !desloc || !ondas) return;
+    const { ondasFator = 1, deslocFator = 1, escala = 1, escorrerFator = 1, direcoes = TODAS_DIRECOES } = ajustes;
     const sortear = (minimo, maximo) => minimo + Math.random() * (maximo - minimo);
-    const direcoes = [
-      { dx: 0, dy: 1, angulo: 0 },
-      { dx: 1, dy: 0, angulo: -90 },
-      { dx: -1, dy: 0, angulo: 90 }
-    ];
     const partes = logo.querySelectorAll(".liquido > g > path");
     const coral = logo.querySelector(".conexao");
     const gotas = Array.from(logo.querySelectorAll(".liquido__gotas > g"), (grupo) => {
@@ -176,8 +179,8 @@ const CONFIG = {
       };
     }) : [];
     const deformarPontoCoral = (ponto, baixo, cima) => ({
-      x: ponto.x + ponto.baixo * baixo * 10 + ponto.cima * cima * 3,
-      y: ponto.y + ponto.baixo * baixo * 20 - ponto.cima * cima * 13
+      x: ponto.x + (ponto.baixo * baixo * 10 + ponto.cima * cima * 3) * escorrerFator,
+      y: ponto.y + (ponto.baixo * baixo * 20 - ponto.cima * cima * 13) * escorrerFator
     });
     const escorrerCoral = (baixo, cima) => {
       if (!coral) return;
@@ -269,7 +272,7 @@ const CONFIG = {
             const lado = 1 - esticando;
             Object.assign(bolhaCoral, {
               ativa: true, lado, inicio: tempo, periodo: sortear(2.5, 3.5),
-              raio: sortear(2, 2.7), comprimento: sortear(4.5, 6.5), queda: sortear(9, 14),
+              raio: sortear(2, 2.7) * escala, comprimento: sortear(4.5, 6.5) * escala, queda: sortear(9, 14) * escala,
               angulo: (lado === 0 ? -27 : 190) + sortear(-4, 4)
             });
             // O lado principal continua fluindo enquanto o oposto cede uma pequena gota.
@@ -323,8 +326,8 @@ const CONFIG = {
           filete.removeAttribute("d");
         }
       });
-      ondas.setAttribute("baseFrequency", `${(0.006 + Math.sin(tempo * 0.4) * 0.001).toFixed(5)} ${(0.008 + Math.cos(tempo * 0.3) * 0.001).toFixed(5)}`);
-      desloc.setAttribute("scale", (6 + Math.sin(tempo * 0.8) * 2).toFixed(2));
+      ondas.setAttribute("baseFrequency", `${((0.006 + Math.sin(tempo * 0.4) * 0.001) * ondasFator).toFixed(5)} ${((0.008 + Math.cos(tempo * 0.3) * 0.001) * ondasFator).toFixed(5)}`);
+      desloc.setAttribute("scale", ((6 + Math.sin(tempo * 0.8) * 2) * deslocFator).toFixed(2));
     };
     const sincronizar = () => {
       cancelAnimationFrame(quadro);
@@ -350,7 +353,14 @@ const CONFIG = {
     const repousar = () => { ponteiroX = 0; };
     logo.addEventListener("pointerleave", repousar);
     logo.addEventListener("pointercancel", repousar);
-  }
+  };
+  animarLiquido(document.querySelector(".logo-liquido"));
+  // Rodapé: o viewBox é 12,5 vezes menor que o do hero (que tem scale(3.6) por dentro); a bolha e o
+  // escorrer da ponta encolhem (a peça é o elemento inteiro, não um detalhe do símbolo) e as gotas só
+  // caem para baixo e para a direita, longe dos links da coluna ao lado.
+  animarLiquido(document.querySelector(".rodape__liquido"), {
+    ondasFator: 15, deslocFator: 0.1, escala: 0.75, escorrerFator: 0.5, direcoes: TODAS_DIRECOES.slice(0, 2)
+  });
 
   // "Quero saber mais" pré-seleciona o assunto do formulário
   const assunto = $("#assunto");
