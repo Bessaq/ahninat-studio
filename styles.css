@@ -171,12 +171,19 @@ dl, dd { margin: 0; }
 }
 .marca-dagua--direita { right: -6%; top: -8%; }
 .marca-dagua--esquerda { left: -10%; bottom: -14%; }
-/* Rodapé: só a conexão coral (as três partes já aparecem na seção de contato, à esquerda) */
-.marca-dagua--rodape {
-  right: max(24px, 4%); top: 46%; transform: translateY(-50%);
-  width: clamp(120px, 12vw, 180px); aspect-ratio: 34 / 45;
+/* Rodapé: só a conexão coral, viva (as três partes já aparecem na seção de contato, à esquerda).
+   A caixa do SVG (64 × 80 unidades) é maior que a peça (34 × 45) para as gotas terem onde cair:
+   sobram 12 unidades à direita da peça e o centro dela fica 2,5 unidades acima do centro da caixa. */
+.rodape__liquido {
+  --u: clamp(3.5px, 0.353vw, 5.3px); /* 1 unidade do viewBox: a peça (34 unidades) mede de 120 a 180 px */
+  position: absolute;
+  right: calc(max(24px, 4%) - 12 * var(--u));
+  top: calc(40% + 2.5 * var(--u)); transform: translateY(-50%); /* a ponta de baixo escorre até 10 unidades */
+  width: calc(64 * var(--u)); aspect-ratio: 64 / 80;
   color: var(--coral); opacity: 0.85;
+  pointer-events: none; /* a caixa transparente passa por cima da coluna Estúdio */
 }
+.rodape__liquido .conexao { pointer-events: visiblePainted; } /* só a peça sente o ponteiro */
 
 /* Entrada suave ao rolar (o JS acrescenta .revelado; sem JS, tudo aparece) */
 @media (prefers-reduced-motion: no-preference) {
@@ -339,12 +346,12 @@ dl, dd { margin: 0; }
   color: var(--grafite);
 }
 .logo-liquido { display: block; width: 100%; height: 100%; }
-.logo-liquido .liquido .conexao { animation: none; }
+.liquido .conexao { animation: none; }
 
 @media (prefers-reduced-motion: reduce) {
-  .logo-liquido .liquido { filter: none; }
-  .logo-liquido .liquido__gotas,
-  .logo-liquido .liquido__bolha-coral { display: none; }
+  .liquido { filter: none; }
+  .liquido__gotas,
+  .liquido__bolha-coral { display: none; }
 }
 
 /* A conexão coral acende quando o campo assenta (seções com os campos ao fundo) */
