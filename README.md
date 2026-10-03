@@ -24,6 +24,23 @@ marca/          kit de marca: manual (PDF), estratégia e textos, tokens.json, l
 
 Para ver localmente, basta abrir o `index.html` no navegador ou servir a pasta (`python3 -m http.server`).
 
+## Verificar o SEO técnico
+
+`node scripts/verificar-site.mjs` confere o `index.html` (âncoras, imagens, title/description,
+endereço base consistente entre canonical/og/JSON-LD/robots.txt/sitemap.xml, JSON-LD válido,
+hierarquia de títulos, travessão em texto visível e arquivos locais referenciados). Rode antes
+de publicar qualquer mudança de marcação; ele falha com `exit 1` e lista o que corrigir.
+
+## Verificação de propriedade (Google Search Console e Bing)
+
+1. Criar a propriedade em [Google Search Console](https://search.google.com/search-console) e em
+   [Bing Webmaster Tools](https://www.bing.com/webmasters), usando `https://bessaq.github.io/ahninat-studio/`
+   (ou o domínio próprio, se já existir).
+2. Cada ferramenta entrega um código de verificação por metatag. Colar o código nos lugares já
+   comentados no `<head>` de `index.html`: `google-site-verification` e `msvalidate.01`.
+3. Publicar o site (merge na `main`) e confirmar a verificação em cada painel.
+4. Enviar `https://bessaq.github.io/ahninat-studio/sitemap.xml` como sitemap em cada ferramenta.
+
 ## Publicação
 
-GitHub Pages, a partir da branch `main`, raiz do repositório. Com um domínio próprio: criar o arquivo `CNAME` com o domínio, apontar o DNS para o GitHub Pages e trocar as URLs em `index.html` (canonical, og:url, og:image e JSON-LD), `robots.txt` e `sitemap.xml`.
+GitHub Pages, a partir da branch `main`, raiz do repositório. Com um domínio próprio: criar o arquivo `CNAME` com o domínio, apontar o DNS para o GitHub Pages e trocar as URLs em `index.html` (canonical, og:url, og:image, hreflang e JSON-LD), `robots.txt` e `sitemap.xml`.
