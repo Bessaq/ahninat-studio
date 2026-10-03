@@ -381,11 +381,28 @@ dl, dd { margin: 0; }
 .faixa span { font-size: 0.875rem; color: var(--texto-suave); }
 
 @media (max-width: 900px) {
-  .hero::before { right: -30vw; top: auto; bottom: -10%; width: 110vw; }
-  .hero__grid { grid-template-columns: 1fr; min-height: 0; gap: 8px; }
-  .hero__logo { width: min(100%, 420px); }
+  .hero::before { display: none; } /* o campo de marfim vai para dentro da cena do logo */
+  .hero__grid { display: block; min-height: 0; }
   .hero__texto .display { font-size: clamp(2.5rem, 10vw, 3.25rem); }
-  .faixa { grid-template-columns: 1fr; gap: 16px; }
+  .hero__acoes { margin-top: 28px; }
+  /* O símbolo em escala grande, encaixado no canto direito: sai pela lateral e mergulha atrás da
+     faixa. --marca é a largura do símbolo inteiro; a cena mostra 76% da altura dele e vai de borda
+     a borda da tela (margens negativas anulam a folga do container). */
+  .hero__logo {
+    --marca: min(124vw, 680px);
+    position: relative;
+    width: auto; aspect-ratio: auto;
+    height: calc(var(--marca) * 0.9 * 0.76);
+    margin: 20px calc(-1 * var(--gutter)) 0;
+    overflow: hidden;
+    background: radial-gradient(circle at 70% 60%, var(--marfim-escuro) 0 36%, transparent 38%);
+  }
+  .hero__logo .logo-liquido {
+    position: absolute;
+    top: 0; right: calc(var(--marca) * -0.18);
+    width: var(--marca); max-width: none; height: calc(var(--marca) * 0.9);
+  }
+  .faixa { grid-template-columns: 1fr; gap: 16px; margin-top: 0; padding-top: 24px; }
 }
 
 /* ---------- Palavras (os quatro verbos) ---------- */
@@ -417,6 +434,11 @@ dl, dd { margin: 0; }
   border-radius: 50%;
   background: var(--coral);
   box-shadow: 0 0 0 0.12em rgba(217, 103, 90, 0.18);
+}
+/* No celular os quatro verbos viram uma coluna, um por linha, com o nó coral entre eles */
+@media (max-width: 560px) {
+  .palavras__lista { flex-direction: column; gap: 10px; font-size: 2.5rem; }
+  .palavras__no { width: 0.2em; height: 0.2em; }
 }
 
 /* ---------- Produtos ---------- */
