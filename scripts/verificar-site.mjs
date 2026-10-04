@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 
 const raiz = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const caminhoIndex = join(raiz, "index.html");
+const caminhoMainJs = join(raiz, "main.js");
 
 const erros = [];
 const avisos = [];
@@ -27,6 +28,7 @@ function extrairTag(html, regex) {
 }
 
 const html = lerArquivo(caminhoIndex);
+const mainJs = lerArquivo(caminhoMainJs);
 // Para checagens de conteúdo visível e de tags, remove comentários primeiro.
 const semComentarios = html.replace(/<!--[\s\S]*?-->/g, "");
 
@@ -132,6 +134,48 @@ for (const m of semComentarios.matchAll(/(?:src|href)\s*=\s*"([^"]+)"/gi)) {
   if (!semFragmento) continue;
   const caminhoAbsoluto = join(raiz, semFragmento);
   if (!existsSync(caminhoAbsoluto)) erros.push(`Arquivo local referenciado não existe: ${caminho}`);
+}
+
+// --- 9. Medição de uso: sem provedor fixo no HTML, pedido só dentro do carregador, faixa acessível ---
+const DOMINIOS_MEDICAO = [
+  "googletagmanager.com",
+  "google-analytics.com",
+  "plausible.io",
+  "goatcounter.com",
+  "cloudflareinsights.com",
+];
+
+for (const m of semComentarios.matchAll(/<script\b[^>]*\ssrc\s*=\s*"([^"]+)"[^>]*>/gi)) {
+  const src = m[1];
+  if (DOMINIOS_MEDICAO.some((dominio) => src.includes(dominio))) {
+    erros.push(`index.html tem um <script src> fixo de medição ("${src}"): precisa entrar só pelo carregador em main.js, conforme CONFIG.medicao.`);
+  }
+}
+
+const inicioCarregador = mainJs.indexOf("// --- Carregador de medição: único lugar que monta pedido para terceiros ---");
+const fimCarregador = mainJs.indexOf("// --- Fim do carregador de medição ---");
+if (inicioCarregador === -1 || fimCarregador === -1 || fimCarregador < inicioCarregador) {
+  erros.push("main.js não tem os marcadores do carregador de medição (início/fim), não dá para confirmar que os pedidos ficam isolados ali.");
+} else {
+  DOMINIOS_MEDICAO.forEach((dominio) => {
+    const regex = new RegExp(dominio.replace(/\./g, "\\."), "g");
+    for (const m of mainJs.matchAll(regex)) {
+      if (m.index < inicioCarregador || m.index > fimCarregador) {
+        erros.push(`main.js referencia "${dominio}" fora do carregador de medição (posição ${m.index}).`);
+      }
+    }
+  });
+}
+
+const faixaMedicaoTag = extrairTag(semComentarios, /<div\s+class="aviso-medicao"[^>]*>/i);
+if (!faixaMedicaoTag) {
+  erros.push("Faltou a faixa de consentimento de medição (div.aviso-medicao) no index.html.");
+} else {
+  if (!/role\s*=\s*"dialog"/i.test(faixaMedicaoTag)) erros.push("A faixa de consentimento precisa de role=\"dialog\".");
+  if (!/aria-label(ledby)?\s*=/i.test(faixaMedicaoTag)) erros.push("A faixa de consentimento precisa de aria-label ou aria-labelledby.");
+  if (!/id="aviso-medicao-aceitar"/i.test(semComentarios) || !/id="aviso-medicao-recusar"/i.test(semComentarios)) {
+    erros.push("Faltam os botões Aceitar e Recusar (ids aviso-medicao-aceitar/aviso-medicao-recusar) na faixa de consentimento.");
+  }
 }
 
 // --- Resumo ---
