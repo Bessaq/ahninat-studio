@@ -4,11 +4,151 @@ const CONFIG = {
   email: "contato@ahninat.com.br", // trocar pelo e-mail real do estúdio
   instagram: "", // ex.: "https://www.instagram.com/ahninat.studio"; vazio esconde o link
   linkedin: "", // ex.: "https://www.linkedin.com/company/ahninat"; vazio esconde o link
+  // Medição de uso: desligada enquanto "provedor" estiver vazio (nada é carregado, nenhum
+  // pedido sai da página). Provedores aceitos e o que vai em "id":
+  //   ga4         -> id = "G-XXXXXXX" (precisa de consentimento: usa cookie)
+  //   plausible   -> id = domínio do site (ex.: "ahninat.com.br")
+  //   goatcounter -> id = código da conta (ex.: "ahninat")
+  //   cloudflare  -> id = token do Web Analytics
+  // Nunca escreva aqui um identificador real: este arquivo é público. Quem liga é o dono.
+  medicao: { provedor: "", id: "" },
 };
 
 (function () {
   const $ = (sel, raiz = document) => raiz.querySelector(sel);
   const $$ = (sel, raiz = document) => Array.from(raiz.querySelectorAll(sel));
+
+  // Medição de uso: ver CONFIG.medicao. Nada de nome, e-mail, mensagem ou texto digitado
+  // em qualquer evento. A faixa de consentimento só existe para o provedor com cookie (ga4);
+  // os outros três não usam cookie e carregam direto, mas ainda respeitam um sinal de recusa
+  // explícito do navegador (globalPrivacyControl ou doNotTrack).
+  const CHAVE_MEDICAO = "ahninat:medicao";
+  const PROVEDOR_MEDICAO = CONFIG.medicao?.provedor || "";
+  const ID_MEDICAO = CONFIG.medicao?.id || "";
+  const MEDICAO_PRECISA_CONSENTIMENTO = PROVEDOR_MEDICAO === "ga4";
+
+  const lerEscolhaMedicao = () => {
+    try {
+      const bruto = localStorage.getItem(CHAVE_MEDICAO);
+      return bruto ? JSON.parse(bruto) : null;
+    } catch {
+      return null;
+    }
+  };
+  const salvarEscolhaMedicao = (aceitou) => {
+    try {
+      localStorage.setItem(CHAVE_MEDICAO, JSON.stringify({ aceitou, data: new Date().toISOString() }));
+    } catch {
+      // localStorage indisponível (modo privado, por exemplo): a escolha só vale para esta visita.
+    }
+  };
+  const recusaGlobalAtiva = () => navigator.globalPrivacyControl === true || navigator.doNotTrack === "1" || window.doNotTrack === "1";
+
+  const carregarScript = (src, atributos = {}) => {
+    const script = document.createElement("script");
+    script.src = src;
+    Object.entries(atributos).forEach(([nome, valor]) => script.setAttribute(nome, valor));
+    document.head.appendChild(script);
+  };
+
+  let medicaoConsentida = !MEDICAO_PRECISA_CONSENTIMENTO;
+  let medicaoCarregada = false;
+
+  // --- Carregador de medição: único lugar que monta pedido para terceiros ---
+  function carregarProvedorMedicao() {
+    if (medicaoCarregada || !PROVEDOR_MEDICAO || !ID_MEDICAO) return;
+    medicaoCarregada = true;
+    if (PROVEDOR_MEDICAO === "ga4") {
+      window.gtag("consent", "update", { analytics_storage: "granted" });
+      window.gtag("js", new Date());
+      window.gtag("config", ID_MEDICAO, { anonymize_ip: true });
+      carregarScript(`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(ID_MEDICAO)}`, { async: "" });
+    } else if (PROVEDOR_MEDICAO === "plausible") {
+      window.plausible = window.plausible || function () {
+        (window.plausible.q = window.plausible.q || []).push(arguments);
+      };
+      carregarScript("https://plausible.io/js/script.js", { "data-domain": ID_MEDICAO, defer: "" });
+    } else if (PROVEDOR_MEDICAO === "goatcounter") {
+      carregarScript(`https://${ID_MEDICAO}.goatcounter.com/count.js`, {
+        "data-goatcounter": `https://${ID_MEDICAO}.goatcounter.com/count`,
+        async: "",
+      });
+    } else if (PROVEDOR_MEDICAO === "cloudflare") {
+      carregarScript("https://static.cloudflareinsights.com/beacon.min.js", {
+        "data-cf-beacon": JSON.stringify({ token: ID_MEDICAO }),
+        defer: "",
+      });
+    }
+  }
+  // --- Fim do carregador de medição ---
+
+  const faixaMedicao = $("#aviso-medicao");
+  let elementoAntesDaFaixa = null;
+  const mostrarFaixaMedicao = () => {
+    if (!faixaMedicao) return;
+    elementoAntesDaFaixa = document.activeElement;
+    faixaMedicao.hidden = false;
+    $("#aviso-medicao-recusar", faixaMedicao)?.focus();
+  };
+  const esconderFaixaMedicao = () => {
+    if (!faixaMedicao) return;
+    faixaMedicao.hidden = true;
+    if (elementoAntesDaFaixa instanceof HTMLElement && document.contains(elementoAntesDaFaixa)) elementoAntesDaFaixa.focus();
+  };
+  const definirConsentimentoMedicao = (aceitou) => {
+    salvarEscolhaMedicao(aceitou);
+    esconderFaixaMedicao();
+    medicaoConsentida = aceitou;
+    if (aceitou) carregarProvedorMedicao();
+    else if (PROVEDOR_MEDICAO === "ga4" && window.gtag) window.gtag("consent", "update", { analytics_storage: "denied" });
+  };
+  $("#aviso-medicao-aceitar")?.addEventListener("click", () => definirConsentimentoMedicao(true));
+  $("#aviso-medicao-recusar")?.addEventListener("click", () => definirConsentimentoMedicao(false));
+  $("#reabrir-medicao")?.addEventListener("click", () => {
+    if (PROVEDOR_MEDICAO) mostrarFaixaMedicao();
+  });
+
+  const iniciarMedicao = () => {
+    if (!PROVEDOR_MEDICAO || !ID_MEDICAO) return;
+    if (PROVEDOR_MEDICAO === "ga4") {
+      // Consent Mode v2: dataLayer e gtag só organizam o estado local; nenhum pedido sai
+      // daqui. O script do GA4 (gtag.js) só é pedido depois do aceite, no carregador acima.
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+      window.gtag("consent", "default", {
+        ad_storage: "denied",
+        analytics_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied",
+        wait_for_update: 500,
+      });
+    }
+    if (recusaGlobalAtiva()) return; // sinal explícito de recusa: nem a faixa aparece
+    const escolha = lerEscolhaMedicao();
+    if (MEDICAO_PRECISA_CONSENTIMENTO) {
+      if (escolha?.aceitou) carregarProvedorMedicao();
+      else if (!escolha) mostrarFaixaMedicao();
+    } else {
+      carregarProvedorMedicao();
+    }
+  };
+  iniciarMedicao();
+
+  // Função única de eventos: traduz para o provedor ativo e não faz nada sem consentimento
+  // nem sem o provedor carregado. NUNCA passar nome, e-mail, mensagem ou texto digitado em "dados".
+  const medir = (nome, dados = {}) => {
+    if (!medicaoCarregada || !medicaoConsentida) return;
+    if (PROVEDOR_MEDICAO === "ga4" && window.gtag) {
+      window.gtag("event", nome, dados);
+    } else if (PROVEDOR_MEDICAO === "plausible" && window.plausible) {
+      window.plausible(nome, { props: dados });
+    } else if (PROVEDOR_MEDICAO === "goatcounter" && window.goatcounter?.count) {
+      const sufixo = Object.values(dados).filter(Boolean).join("/");
+      window.goatcounter.count({ path: sufixo ? `${nome}/${sufixo}` : nome, title: nome, event: true });
+    }
+    // Cloudflare Web Analytics não tem API pública de eventos personalizados: conta só
+    // visitas de página. Com "cloudflare", medir() fica sem efeito (ver docs/medicao.md).
+  };
 
   // Contatos configuráveis: os links de rede só aparecem quando preenchidos.
   $$("[data-email]").forEach((a) => {
@@ -367,8 +507,60 @@ const CONFIG = {
   $$("[data-produto]").forEach((link) => {
     link.addEventListener("click", () => {
       if (assunto) assunto.value = link.dataset.produto;
+      medir("produto_interesse", { produto: link.dataset.produto });
     });
   });
+
+  // Medição: clique em qualquer botão da página, identificando a seção de origem.
+  $$(".botao").forEach((botao) => {
+    botao.addEventListener("click", () => {
+      const secaoId = botao.closest("section[id]")?.id || (botao.closest(".rodape") ? "rodape" : botao.closest(".nav") ? "cabecalho" : "");
+      medir("cta_clique", { botao: botao.textContent.trim(), secao: secaoId });
+    });
+  });
+
+  // Medição: clique em link externo (só o domínio, nunca a URL completa com parâmetros).
+  $$('a[target="_blank"]').forEach((link) => {
+    link.addEventListener("click", () => {
+      try {
+        medir("link_externo", { dominio: new URL(link.href, location.href).hostname });
+      } catch {
+        // href inválido ou vazio: nada a medir
+      }
+    });
+  });
+
+  // Medição: seção vista (uma vez por seção) e profundidade de rolagem (50% e 90%)
+  if ("IntersectionObserver" in window && secoes.length) {
+    const obsSecaoVista = new IntersectionObserver(
+      (entradas, observador) => {
+        entradas.forEach((entrada) => {
+          if (entrada.isIntersecting) {
+            medir("secao_vista", { secao: entrada.target.id });
+            observador.unobserve(entrada.target);
+          }
+        });
+      },
+      { threshold: 0.5 },
+    );
+    secoes.forEach((s) => obsSecaoVista.observe(s));
+  }
+  const marcosRolagem = new Set();
+  window.addEventListener(
+    "scroll",
+    () => {
+      const altura = document.documentElement.scrollHeight - window.innerHeight;
+      if (altura <= 0) return;
+      const percentual = ((window.scrollY / altura) * 100);
+      [50, 90].forEach((marco) => {
+        if (percentual >= marco && !marcosRolagem.has(marco)) {
+          marcosRolagem.add(marco);
+          medir("rolagem", { percentual: marco });
+        }
+      });
+    },
+    { passive: true },
+  );
 
   // Formulário: monta um e-mail pronto (sem servidor)
   const form = $("#form-contato");
@@ -394,6 +586,7 @@ const CONFIG = {
 
       const subject = encodeURIComponent(`[Site] ${tema}: ${nome}`);
       const body = encodeURIComponent(`${mensagem}\n\n${nome}\n${email}`);
+      medir("contato_envio", { assunto: tema });
       window.location.href = `mailto:${CONFIG.email}?subject=${subject}&body=${body}`;
       status.textContent = "Abrimos seu aplicativo de e-mail com a mensagem pronta.";
     });
