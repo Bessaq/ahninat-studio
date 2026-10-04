@@ -4,9 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Ahninat Studio | Tecnologia que sustenta o próximo passo</title>
-  <meta name="description" content="Ahninat Studio é um estúdio de tecnologia e produtos digitais. Estratégia, design e desenvolvimento para produtos, sistemas e integrações, com processo claro e preparado para a continuidade. Criadores do Astrologic e do Numerologic.">
+  <meta name="description" content="Estúdio de tecnologia e produtos digitais: estratégia, design e desenvolvimento para soluções sob medida, além do Astrologic e do Numerologic.">
+  <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#174B52">
   <link rel="canonical" href="https://bessaq.github.io/ahninat-studio/">
+  <link rel="alternate" hreflang="pt-BR" href="https://bessaq.github.io/ahninat-studio/">
+  <link rel="alternate" hreflang="x-default" href="https://bessaq.github.io/ahninat-studio/">
+
+  <!-- Verificação de propriedade: cole aqui o código gerado pelo Google Search Console e pelo Bing Webmaster Tools.
+       <meta name="google-site-verification" content="COLE_O_CODIGO_AQUI">
+       <meta name="msvalidate.01" content="COLE_O_CODIGO_AQUI"> -->
 
   <meta property="og:type" content="website">
   <meta property="og:locale" content="pt_BR">
@@ -31,15 +38,60 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Ahninat Studio",
-    "alternateName": "Ahninat",
-    "url": "https://bessaq.github.io/ahninat-studio/",
-    "logo": "https://bessaq.github.io/ahninat-studio/assets/icone-512.png",
-    "slogan": "Tecnologia que sustenta o próximo passo.",
-    "description": "Estúdio de tecnologia e produtos digitais. Estratégia, design e desenvolvimento para produtos, sistemas e integrações.",
-    "areaServed": "BR",
-    "knowsAbout": ["Produtos digitais", "Aplicativos", "Sistemas e integrações", "Design de produto", "Astrologia", "Numerologia"]
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://bessaq.github.io/ahninat-studio/#organizacao",
+        "name": "Ahninat Studio",
+        "alternateName": "Ahninat",
+        "url": "https://bessaq.github.io/ahninat-studio/",
+        "logo": "https://bessaq.github.io/ahninat-studio/assets/icone-512.png",
+        "slogan": "Tecnologia que sustenta o próximo passo.",
+        "description": "Estúdio de tecnologia e produtos digitais. Estratégia, design e desenvolvimento para produtos, sistemas e integrações.",
+        "areaServed": "BR",
+        "knowsAbout": ["Produtos digitais", "Aplicativos", "Sistemas e integrações", "Design de produto", "Astrologia", "Numerologia"]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://bessaq.github.io/ahninat-studio/#site",
+        "url": "https://bessaq.github.io/ahninat-studio/",
+        "name": "Ahninat Studio",
+        "inLanguage": "pt-BR",
+        "publisher": { "@id": "https://bessaq.github.io/ahninat-studio/#organizacao" }
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://bessaq.github.io/ahninat-studio/#pagina",
+        "url": "https://bessaq.github.io/ahninat-studio/",
+        "name": "Ahninat Studio | Tecnologia que sustenta o próximo passo",
+        "description": "Estúdio de tecnologia e produtos digitais: estratégia, design e desenvolvimento para soluções sob medida, além do Astrologic e do Numerologic.",
+        "inLanguage": "pt-BR",
+        "isPartOf": { "@id": "https://bessaq.github.io/ahninat-studio/#site" },
+        "about": { "@id": "https://bessaq.github.io/ahninat-studio/#organizacao" }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://bessaq.github.io/ahninat-studio/#astrologic",
+        "name": "Astrologic",
+        "description": "Astrologia com base clássica e interpretações personalizadas: mapa natal, trânsitos, sinastria, astrologia horária e revolução solar.",
+        "applicationCategory": "LifestyleApplication",
+        "operatingSystem": "iOS",
+        "inLanguage": "pt-BR",
+        "creator": { "@id": "https://bessaq.github.io/ahninat-studio/#organizacao" },
+        "publisher": { "@id": "https://bessaq.github.io/ahninat-studio/#organizacao" }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://bessaq.github.io/ahninat-studio/#numerologic",
+        "name": "Numerologic",
+        "description": "Numerologia comparada, modular e auditável, com cada número informando a escola, a tabela e a regra de redução usadas.",
+        "applicationCategory": "LifestyleApplication",
+        "operatingSystem": "Web",
+        "inLanguage": "pt-BR",
+        "creator": { "@id": "https://bessaq.github.io/ahninat-studio/#organizacao" },
+        "publisher": { "@id": "https://bessaq.github.io/ahninat-studio/#organizacao" }
+      }
+    ]
   }
   </script>
 </head>
@@ -65,7 +117,7 @@
 <header class="topo" id="topo">
   <div class="container topo__linha">
     <a class="marca" href="#inicio">
-      <img class="marca__logo" src="assets/logo-horizontal.png" width="802" height="272" alt="Ahninat Studio" decoding="async">
+      <img class="marca__logo" src="assets/logo-horizontal.png" width="802" height="272" alt="Ahninat Studio" decoding="async" fetchpriority="high">
     </a>
 
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav" aria-label="Abrir menu">
@@ -488,7 +540,7 @@
         <p class="rodape__assinatura">Tecnologia que sustenta o próximo passo.<br>Estratégia, design e tecnologia para produtos digitais.</p>
       </div>
       <div>
-        <h4>Produtos</h4>
+        <h3>Produtos</h3>
         <ul>
           <li><a href="#produtos">Astrologic</a></li>
           <li><a href="#produtos">Numerologic</a></li>
@@ -496,7 +548,7 @@
         </ul>
       </div>
       <div>
-        <h4>Estúdio</h4>
+        <h3>Estúdio</h3>
         <ul>
           <li><a href="#solucoes">Soluções</a></li>
           <li><a href="#processo">Como trabalhamos</a></li>
@@ -512,6 +564,6 @@
   </div>
 </footer>
 
-<script src="main.js"></script>
+<script src="main.js" defer></script>
 </body>
 </html>
