@@ -829,8 +829,51 @@ dl, dd { margin: 0; }
   display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px;
   color: rgba(244, 240, 232, 0.55);
 }
+.rodape__privacidade {
+  margin-top: 24px;
+  max-width: 54em;
+  line-height: 1.6;
+  font-size: 0.8125rem;
+  color: rgba(244, 240, 232, 0.55);
+}
+.rodape__privacidade a { text-decoration: underline; text-underline-offset: 2px; }
+.rodape__privacidade a:hover { color: var(--marfim); }
 
 @media (max-width: 700px) { .rodape__grid { grid-template-columns: 1fr; gap: 32px; } }
+
+/* ---------- Faixa de consentimento de medição ---------- */
+
+.aviso-medicao {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 95;
+  background: var(--grafite-escuro);
+  color: var(--marfim);
+  border-top: 1px solid rgba(244, 240, 232, 0.14);
+  box-shadow: 0 -12px 24px -16px rgba(0, 0, 0, 0.4);
+}
+.aviso-medicao__caixa {
+  padding-block: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+}
+.aviso-medicao__caixa p {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: rgba(244, 240, 232, 0.85);
+  max-width: 60ch;
+}
+.aviso-medicao__caixa a { text-decoration: underline; text-underline-offset: 2px; }
+.aviso-medicao__caixa a:hover { color: var(--marfim); }
+.aviso-medicao__acoes { display: flex; gap: 12px; flex-shrink: 0; }
+.aviso-medicao .botao--secundario { color: var(--marfim); border-color: rgba(244, 240, 232, 0.4); min-height: 44px; }
+.aviso-medicao .botao--secundario:hover { border-color: var(--marfim); background: rgba(244, 240, 232, 0.08); }
+
+@media (max-width: 560px) { .aviso-medicao__caixa { flex-direction: column; align-items: stretch; } .aviso-medicao__acoes { justify-content: flex-end; } }
 
 /* ---------- Movimento ---------- */
 

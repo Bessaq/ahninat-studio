@@ -554,15 +554,27 @@
           <li><a href="#processo">Como trabalhamos</a></li>
           <li><a href="#sobre">Sobre</a></li>
           <li><a href="#contato">Contato</a></li>
+          <li><a href="#privacidade-medicao" id="reabrir-medicao">Privacidade e medição</a></li>
         </ul>
       </div>
     </div>
+    <p class="rodape__privacidade" id="privacidade-medicao">Medição de uso: hoje está desligada. Quando o estúdio ligar, um provedor de análise conta visitas, cliques em botões e rolagem da página, sem identificar quem visita e sem guardar nome, e-mail ou o texto do formulário. Você pode recusar a qualquer momento pelo link acima; a escolha fica salva só neste navegador.</p>
     <div class="rodape__legal">
       <span>© <span id="ano">2026</span> Ahninat Studio. Todos os direitos reservados.</span>
       <span>Astrologia e numerologia são apresentadas como práticas simbólicas e interpretativas.</span>
     </div>
   </div>
 </footer>
+
+<div class="aviso-medicao" id="aviso-medicao" role="dialog" aria-modal="false" aria-labelledby="aviso-medicao-texto" hidden>
+  <div class="container aviso-medicao__caixa">
+    <p id="aviso-medicao-texto">Medimos visitas e cliques de forma anônima para entender como o site é usado, sem nome, e-mail ou texto que você escreve. <a href="#privacidade-medicao">Saiba mais</a>.</p>
+    <div class="aviso-medicao__acoes">
+      <button type="button" class="botao botao--secundario" id="aviso-medicao-recusar">Recusar</button>
+      <button type="button" class="botao botao--secundario" id="aviso-medicao-aceitar">Aceitar</button>
+    </div>
+  </div>
+</div>
 
 <script src="main.js" defer></script>
 </body>
