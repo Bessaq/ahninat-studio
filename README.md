@@ -18,6 +18,7 @@ marca/          kit de marca: manual (PDF), estratégia e textos, tokens.json, l
 ## Editar
 
 - **Contatos:** `main.js`, bloco `CONFIG` (e-mail, Instagram, LinkedIn). Rede vazia não aparece na página.
+- **Medição de uso:** `main.js`, `CONFIG.medicao` (provedor e id). Vazio por padrão: nada é carregado nem medido. Ver `docs/medicao.md` para ligar um provedor, a lista de eventos e o que muda com e sem consentimento.
 - **Textos:** direto no `index.html`. Os textos vêm de `marca/Estrategia_e_Textos.md` (tom de voz: preciso, próximo e sereno; nada de números, clientes ou certificações sem evidência).
 - **Cores, tipografia, cantos e movimento:** `styles.css`, `:root`, conforme `marca/tokens.json`.
 - **Logo:** os PNG em `assets/` foram recortados da referência do manual (não existe o vetor original do lettering). O símbolo tem versão vetorial (`assets/simbolo.svg`).
@@ -28,8 +29,10 @@ Para ver localmente, basta abrir o `index.html` no navegador ou servir a pasta (
 
 `node scripts/verificar-site.mjs` confere o `index.html` (âncoras, imagens, title/description,
 endereço base consistente entre canonical/og/JSON-LD/robots.txt/sitemap.xml, JSON-LD válido,
-hierarquia de títulos, travessão em texto visível e arquivos locais referenciados). Rode antes
-de publicar qualquer mudança de marcação; ele falha com `exit 1` e lista o que corrigir.
+hierarquia de títulos, travessão em texto visível e arquivos locais referenciados) e a medição
+de uso (nenhum `<script src>` fixo de provedor no HTML, nenhum domínio de provedor em `main.js`
+fora do carregador, faixa de consentimento acessível). Rode antes de publicar qualquer mudança
+de marcação; ele falha com `exit 1` e lista o que corrigir.
 
 ## Verificação de propriedade (Google Search Console e Bing)
 
@@ -40,6 +43,14 @@ de publicar qualquer mudança de marcação; ele falha com `exit 1` e lista o qu
    comentados no `<head>` de `index.html`: `google-site-verification` e `msvalidate.01`.
 3. Publicar o site (merge na `main`) e confirmar a verificação em cada painel.
 4. Enviar `https://bessaq.github.io/ahninat-studio/sitemap.xml` como sitemap em cada ferramenta.
+
+## Medição de uso com consentimento
+
+Desligada por padrão (`CONFIG.medicao` vazio em `main.js`). Provedores aceitos: `ga4`
+(com faixa de consentimento, porque usa cookie), `plausible`, `goatcounter` e
+`cloudflare` (sem cookie, carregam direto). Passo a passo para ligar, tabela de eventos
+(`cta_clique`, `produto_interesse`, `contato_envio`, `link_externo`, `secao_vista`,
+`rolagem`) e o que muda com e sem consentimento: `docs/medicao.md`.
 
 ## Publicação
 
